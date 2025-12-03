@@ -67,55 +67,112 @@ function calculateRank(score) {
 // --- 3. FITUR UTAMA: DOWNLOAD GAMBAR (html2canvas) ---
 function downloadCard() {
     const cardElement = document.getElementById('accessCard');
-    const btn = document.querySelector('.btn-start'); // Tombol Download
-    
-    // A. Ubah status tombol agar user tahu sistem sedang bekerja
+    const btn = document.querySelector('.btn-start');
     const originalText = btn.innerText;
+    
     btn.innerText = "⏳ MEMPROSES GAMBAR...";
-    btn.style.opacity = "0.7";
     btn.disabled = true;
-
-    // B. Eksekusi Library html2canvas
-    // Fungsi ini "memotret" elemen HTML dan menjadikannya Canvas
-    html2canvas(cardElement, {
-        backgroundColor: null, // Transparan di luar border
-        scale: 2,              // Resolusi tinggi (agar tidak pecah di HP)
-        useCORS: true,         // Izin akses gambar eksternal (jika ada)
-        logging: false         // Matikan log debug agar console bersih
-    }).then(canvas => {
-        
-        // C. Membuat Link Download Palsu
-        const link = document.createElement('a');
-        
-        // Format Nama File: HASIL_Nama_Misi.png
-        const cleanName = sessionStorage.getItem('agent_name').replace(/[^a-zA-Z0-9]/g, '_');
-        link.download = `HASIL_${cleanName}.png`;
-        
-        // Konversi Canvas ke Data URL (Format Gambar)
-        link.href = canvas.toDataURL("image/png");
-        
-        // Klik link secara otomatis
-        link.click();
-
-        // D. Kembalikan Status Tombol
-        setTimeout(() => {
-            btn.innerText = "✅ BERHASIL DISIMPAN";
-            btn.style.borderColor = "var(--neon-green)";
-            btn.style.color = "var(--neon-green)";
+    
+    // STEP 1: Create a SIMPLIFIED version for capture
+    const simplifiedHTML = `
+        <div style="
+            width: 400px;
+            padding: 30px;
+            background: #0F172A;
+            border-top: 8px solid var(--neon-gold);
+            border-radius: 16px;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        ">
+            <!-- Header -->
+            <div style="display: flex; justify-content: space-between; margin-bottom: 25px;">
+                <div>
+                    <h3 style="margin: 0; font-size: 1.8rem; color: white;">CIVICLOKA</h3>
+                    <span style="font-family: monospace; font-size: 0.7rem; color: #F59E0B;">OFFICIAL AGENT RECORD</span>
+                </div>
+                <div style="width: 40px; height: 28px; background: linear-gradient(to bottom, #EF4444 50%, #F1F5F9 50%); border-radius: 4px;"></div>
+            </div>
             
-            // Reset tombol ke semula setelah 2 detik
-            setTimeout(() => {
-                btn.innerText = originalText;
-                btn.style.borderColor = "";
-                btn.style.color = "";
-                btn.style.opacity = "1";
-                btn.disabled = false;
-            }, 2000);
-        }, 500);
-
+            <!-- Data -->
+            <div style="margin-bottom: 20px;">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 8px 0;">
+                    <span style="color: #94A3B8; font-size: 0.8rem; font-family: monospace;">CODENAME</span>
+                    <span style="color: #06B6D4; font-weight: bold; text-transform: uppercase;" id="renderName">${sessionStorage.getItem('agent_name') || 'ANON'}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 8px 0;">
+                    <span style="color: #94A3B8; font-size: 0.8rem; font-family: monospace;">UNIT / KELAS</span>
+                    <span style="font-weight: bold; text-transform: uppercase;">${sessionStorage.getItem('agent_class') || '-'}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 8px 0;">
+                    <span style="color: #94A3B8; font-size: 0.8rem; font-family: monospace;">MISI OPERASI</span>
+                    <span style="font-weight: bold; text-transform: uppercase;">${sessionStorage.getItem('last_mission') || 'TRAINING'}</span>
+                </div>
+            </div>
+            
+            <!-- Score Box -->
+            <div style="text-align: center; margin-top: 30px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="font-family: monospace; font-size: 0.75rem; color: #94A3B8; margin-bottom: 5px;">TOTAL SKOR</div>
+                <div style="font-size: 4rem; font-weight: 800; color: white; line-height: 1;">${sessionStorage.getItem('last_score') || '0'}</div>
+                <div style="font-size: 3rem; margin: 10px 0;">👑</div>
+                <div style="font-family: monospace; letter-spacing: 3px; font-weight: bold; font-size: 1.1rem; color: #F59E0B;">ELITE AGENT</div>
+            </div>
+            
+            <!-- Watermark -->
+            <div style="position: absolute; bottom: 10px; right: -10px; font-size: 3.5rem; color: rgba(255,255,255,0.03); transform: rotate(-30deg); font-weight: 800; pointer-events: none;">CONFIDENTIAL</div>
+        </div>
+    `;
+    
+    // STEP 2: Create hidden div with simplified HTML
+    const hiddenDiv = document.createElement('div');
+    hiddenDiv.style.position = 'fixed';
+    hiddenDiv.style.left = '-9999px';
+    hiddenDiv.style.top = '0';
+    hiddenDiv.innerHTML = simplifiedHTML;
+    document.body.appendChild(hiddenDiv);
+    
+    // STEP 3: Capture the simplified version
+    const elementToCapture = hiddenDiv.firstElementChild;
+    
+    html2canvas(elementToCapture, {
+        backgroundColor: '#0F172A',
+        scale: 3, // Higher quality
+        logging: false,
+        allowTaint: true,
+        useCORS: true,
+        width: elementToCapture.offsetWidth,
+        height: elementToCapture.offsetHeight,
+        onclone: function(clonedDoc) {
+            // Optional: modify cloned document if needed
+        }
+    }).then(canvas => {
+        // Create download
+        const link = document.createElement('a');
+        const cleanName = sessionStorage.getItem('agent_name')?.replace(/[^a-zA-Z0-9]/g, '_') || 'agent';
+        link.download = `HASIL_${cleanName}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+        
+        // Clean up
+        document.body.removeChild(hiddenDiv);
+        
+        // Success feedback
+        btn.innerText = "✅ BERHASIL DISIMPAN";
+        btn.style.borderColor = "var(--neon-green)";
+        btn.style.color = "var(--neon-green)";
+        
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.style.borderColor = "";
+            btn.style.color = "";
+            btn.disabled = false;
+        }, 2000);
+        
     }).catch(err => {
-        console.error("Gagal generate gambar:", err);
-        alert("ERROR: Browser tidak mendukung fitur ini. Silakan Screenshot manual (Tombol Power + Volume).");
+        console.error("Capture failed:", err);
+        document.body.removeChild(hiddenDiv);
+        
+        alert("Gagal generate gambar. Silakan screenshot manual.");
         btn.innerText = originalText;
         btn.disabled = false;
     });
