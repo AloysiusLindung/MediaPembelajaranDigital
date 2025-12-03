@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MISSION REPORT - CIVICLOKA</title>
+    
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/glass.css">
+    <link rel="stylesheet" href="assets/css/animate.css">
+
+    <style>
+        /* =========================================
+           STYLE KHUSUS KARTU LAPORAN
+           (Disimpan di sini agar hasil screenshot akurat)
+           ========================================= */
+        
+        #accessCard {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            /* Border atas Emas sebagai default (nanti berubah via JS) */
+            border-top: 8px solid var(--neon-gold);
+            /* Background gradasi gelap agar teks putih terbaca jelas */
+            background: linear-gradient(135deg, rgba(30,41,59,0.98) 0%, rgba(15,23,42,0.98) 100%);
+            margin: 0 auto 30px auto;
+            text-align: left;
+            overflow: hidden;
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* Watermark Holografik di background kartu */
+        #accessCard::after {
+            content: "CONFIDENTIAL";
+            position: absolute;
+            bottom: 10px;
+            right: -10px;
+            font-size: 3.5rem;
+            font-family: var(--font-head);
+            color: rgba(255,255,255,0.03);
+            transform: rotate(-30deg);
+            pointer-events: none;
+            font-weight: 800;
+        }
+
+        /* Dekorasi Badge Rank */
+        .rank-badge {
+            font-size: 3rem;
+            margin: 10px 0;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+            animation: fadeInUp 0.5s;
+        }
+
+        /* Baris Data Identitas */
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 8px 0;
+            margin-bottom: 5px;
+        }
+
+        .data-label {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
+        }
+
+        .data-value {
+            color: var(--text-main);
+            font-family: var(--font-body);
+            font-weight: 700;
+            text-align: right;
+            text-transform: uppercase;
+        }
+
+        /* Kotak Skor */
+        .score-box {
+            text-align: center; 
+            margin-top: 30px; 
+            padding: 20px; 
+            background: rgba(255,255,255,0.03); 
+            border-radius: 12px; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container center-screen">
+        
+        <h2 class="fade-up" style="color: var(--neon-cyan); margin-bottom: 5px; letter-spacing: 3px;">MISSION DEBRIEFING</h2>
+        <p class="text-mono text-dim fade-up delay-1" style="margin-bottom: 40px;">LAPORAN KINERJA AGEN</p>
+
+        <div id="accessCard" class="fade-up delay-2">
+            
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px;">
+                <div>
+                    <h3 style="margin: 0; font-size: 1.8rem; color: white; letter-spacing: 1px;">CIVICLOKA</h3>
+                    <span class="text-mono" style="font-size: 0.7rem; color: var(--neon-gold); letter-spacing: 2px;">OFFICIAL AGENT RECORD</span>
+                </div>
+                <div style="width: 40px; height: 28px; background: linear-gradient(to bottom, #EF4444 50%, #F1F5F9 50%); border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.3);"></div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <div class="data-row">
+                    <span class="data-label">CODENAME</span>
+                    <span class="data-value" id="resName" style="color: var(--neon-cyan);">LOADING...</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">UNIT / KELAS</span>
+                    <span class="data-value" id="resClass">LOADING...</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">MISI OPERASI</span>
+                    <span class="data-value" id="resMission">LOADING...</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">TIMESTAMP</span>
+                    <span class="data-value" id="resTime" style="font-size: 0.7rem; opacity: 0.8;">-</span>
+                </div>
+            </div>
+
+            <div class="score-box">
+                <div class="text-mono" style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 5px;">TOTAL SKOR</div>
+                <div id="resScore" style="font-size: 4rem; font-weight: 800; color: var(--text-main); line-height: 1; text-shadow: 0 0 20px rgba(255,255,255,0.1);">0</div>
+                
+                <div id="resBadge" class="rank-badge">🔰</div>
+                
+                <div id="resRankText" class="text-mono" style="letter-spacing: 3px; font-weight: bold; font-size: 1.1rem;">ROOKIE</div>
+            </div>
+
+        </div>
+        <div class="fade-up delay-3" style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 400px;">
+            
+            <button onclick="downloadCard()" class="btn-tactical btn-start" style="flex: 2;">
+                ⬇ SIMPAN BUKTI (PNG)
+            </button>
+
+            <button onclick="returnToBase()" class="btn-tactical btn-danger" style="flex: 1;">
+                KEMBALI
+            </button>
+
+        </div>
+
+    </div>
+
+    <script src="assets/lib/html2canvas.js"></script>
+    
+    <script src="assets/js/export.js"></script>
+
+</body>
+</html>

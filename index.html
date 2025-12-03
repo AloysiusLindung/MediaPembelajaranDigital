@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIVICLOKA: TACTICAL SPRINT</title>
+    
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/glass.css">
+    <link rel="stylesheet" href="assets/css/animate.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* CSS Tambahan Khusus Menu Utama */
+        .hero-section {
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .menu-card {
+            display: block; 
+            text-decoration: none;
+            padding: 30px;
+            transition: transform 0.3s, border-color 0.3s;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Warna Border Hover & Shadow */
+        .menu-card.materi:hover { border-color: #fff; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .menu-card.m1:hover { border-color: var(--neon-gold); box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
+        .menu-card.m2:hover { border-color: var(--neon-cyan); box-shadow: 0 0 20px rgba(6, 182, 212, 0.3); }
+
+        .icon-large {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        /* Tombol Logout di Pojok Kanan Atas */
+        .btn-logout {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--neon-red);
+            color: var(--neon-red);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            transition: all 0.3s;
+            z-index: 100;
+            text-decoration: none;
+        }
+
+        .btn-logout:hover {
+            background: var(--neon-red);
+            color: white;
+            box-shadow: 0 0 10px var(--neon-red);
+        }
+        
+        @media (max-width: 600px) {
+            .btn-logout {
+                position: static;
+                display: block;
+                width: 200px;
+                margin: 0 auto 20px auto;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button onclick="logout()" class="btn-logout" id="logoutBtn" style="display: none;">
+        <i class="fas fa-sign-out-alt"></i> GANTI AGEN / KELUAR
+    </button>
+
+    <div class="container">
+        
+        <div class="hero-section fade-up">
+            <h1 class="glitch" data-text="CIVICLOKA" style="font-size: 4rem; margin-bottom: 10px; color: var(--text-main);">CIVICLOKA</h1>
+            <p id="welcomeMsg" class="text-mono text-dim" style="letter-spacing: 2px;">TACTICAL SPRINT EDITION</p>
+        </div>
+
+        <div class="menu-grid fade-up" style="animation-delay: 0.2s;">
+    
+    <a href="materi.html" class="glass-panel menu-card materi">
+        <span class="icon-large" style="color: #fff;">📂</span>
+        <h2 class="text-mono" style="color: #fff;">ARSIP MATERI</h2>
+        <p class="text-dim">Video & Teori Lengkap</p>
+    </a>
+
+    <a href="quiz.html" class="glass-panel menu-card" style="border-color: var(--neon-green); box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);">
+        <span class="icon-large" style="color: var(--neon-green);">📝</span>
+        <h2 class="text-mono" style="color: var(--neon-green);">UJI KOMPETENSI</h2>
+        <p class="text-dim">Evaluasi Studi Kasus (Pilgan)</p>
+    </a>
+
+    <a href="mission1.html" class="glass-panel menu-card m1">
+        <span class="icon-large" style="color: var(--neon-gold);">🛡️</span>
+        <h2 class="text-gold">MISI 01</h2>
+        <p class="text-dim">Game: Code Pancasila</p>
+    </a>
+
+    <a href="mission2.html" class="glass-panel menu-card m2">
+        <span class="icon-large" style="color: var(--neon-cyan);">🌍</span>
+        <h2 class="text-cyan">MISI 02</h2>
+        <p class="text-dim">Game: Global Strategy</p>
+    </a>
+
+</div>
+
+        <div style="text-align: center; margin-top: 50px; color: var(--text-dim); font-size: 0.8rem;">
+            <p>SYSTEM READY // V.1.0 // NO DATABASE REQUIRED</p>
+        </div>
+
+    </div>
+
+    <script>
+        // Jalankan pengecekan identitas segera setelah halaman dimuat
+        window.onload = function() {
+            checkSession();
+        };
+
+        function checkSession() {
+            // Cek apakah data nama sudah tersimpan di browser
+            const agentName = sessionStorage.getItem('agent_name');
+            
+            if (!agentName) {
+                // JIKA BELUM LOGIN: Jalankan proses input
+                performLogin();
+            } else {
+                // JIKA SUDAH LOGIN: Tampilkan nama agen
+                showWelcome(agentName);
+            }
+        }
+
+        function performLogin() {
+            // 1. Input Nama
+            let name = prompt("MASUKKAN KODE NAMA AGEN:", "");
+            
+            // Validasi: Tidak boleh kosong
+            if (name == null || name.trim() === "") {
+                // Jika dicancel/kosong, paksa reload agar tanya lagi
+                window.location.reload();
+                return;
+            }
+
+            // 2. Input Kelas (Sesuai Rancangan)
+            let kelas = prompt("MASUKKAN KELAS AGEN (Contoh: XII IPA 1):", "");
+            if (kelas == null) kelas = "-"; // Boleh kosong
+
+            // Simpan ke Session Storage (Hilang saat browser ditutup)
+            sessionStorage.setItem('agent_name', name.toUpperCase());
+            sessionStorage.setItem('agent_class', kelas.toUpperCase());
+
+            // Refresh halaman untuk menerapkan perubahan
+            window.location.reload();
+        }
+
+        function showWelcome(name) {
+            const welcomeElement = document.getElementById('welcomeMsg');
+            const kelas = sessionStorage.getItem('agent_class') || "";
+            
+            // Tampilkan pesan sapaan dengan efek warna neon
+            welcomeElement.innerHTML = `
+                STATUS: ONLINE <br> 
+                AGEN: <span style="color:var(--neon-gold); font-weight:bold;">${name}</span> 
+                ${kelas ? `[${kelas}]` : ''}
+            `;
+            
+            // Munculkan tombol Logout
+            document.getElementById('logoutBtn').style.display = 'inline-block';
+        }
+
+        function logout() {
+            if(confirm("AKHIRI SESI AGEN? Data misi akan di-reset.")) {
+                sessionStorage.clear(); // Hapus semua data
+                window.location.reload(); // Kembali ke login awal
+            }
+        }
+    </script>
+</body>
+</html>

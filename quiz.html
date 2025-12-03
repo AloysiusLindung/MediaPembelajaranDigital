@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UJI KOMPETENSI - CIVICLOKA</title>
+    
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/glass.css">
+    <link rel="stylesheet" href="assets/css/animate.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <style>
+        /* CSS KHUSUS HALAMAN KUIS */
+        .quiz-container { max-width: 900px; margin: 0 auto; padding-bottom: 100px; }
+        .quiz-header { text-align: center; padding: 40px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 30px; }
+        
+        /* NAVIGASI BAB */
+        .tab-nav { display: flex; justify-content: center; gap: 20px; margin-bottom: 40px; flex-wrap: wrap; }
+        .tab-btn {
+            background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); color: var(--text-dim);
+            padding: 15px 30px; border-radius: 50px; cursor: pointer; font-family: var(--font-head);
+            font-size: 1.1rem; transition: all 0.3s; min-width: 180px;
+        }
+        .tab-btn.active { background: rgba(255, 255, 255, 0.1); color: #fff; transform: scale(1.05); }
+        #btn-bab1.active { border-color: var(--neon-gold); color: var(--neon-gold); box-shadow: 0 0 15px rgba(245, 158, 11, 0.3); }
+        #btn-bab2.active { border-color: var(--neon-cyan); color: var(--neon-cyan); box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); }
+
+        /* KARTU SOAL */
+        .question-card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            position: relative;
+            backdrop-filter: blur(5px);
+        }
+        .question-text { font-size: 1.1rem; color: #fff; margin-bottom: 15px; line-height: 1.6; }
+        .case-study-label {
+            display: inline-block; background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 4px;
+            font-size: 0.8rem; color: #aaa; margin-bottom: 10px; font-family: var(--font-mono);
+        }
+
+        /* PILIHAN JAWABAN */
+        .options-grid { display: grid; gap: 10px; }
+        .option-label {
+            display: block; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; cursor: pointer; transition: all 0.2s; color: #cbd5e1;
+        }
+        .option-label:hover { background: rgba(255,255,255,0.05); border-color: #fff; }
+        .option-label input { margin-right: 10px; transform: scale(1.2); }
+
+        /* TOMBOL SUBMIT */
+        .btn-submit {
+            width: 100%; padding: 15px; font-size: 1.2rem; margin-top: 30px;
+            background: linear-gradient(45deg, var(--neon-gold), #d97706);
+            border: none; color: white; border-radius: 8px; cursor: pointer; font-family: var(--font-head);
+            transition: 0.3s;
+        }
+        .btn-submit:hover { filter: brightness(1.2); transform: translateY(-2px); }
+        
+        /* Loading State Button */
+        .btn-submit.loading {
+            background: #555; pointer-events: none; opacity: 0.7;
+        }
+
+        /* HASIL NILAI */
+        .result-panel {
+            text-align: center; display: none; padding: 40px; background: rgba(0,0,0,0.8);
+            border-radius: 20px; border: 2px solid var(--neon-green); margin-top: 20px;
+        }
+        .score-circle {
+            width: 150px; height: 150px; border-radius: 50%; border: 5px solid var(--neon-green);
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto;
+            font-size: 3rem; font-family: var(--font-head); color: var(--neon-green);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+        }
+
+        .section-quiz { display: none; animation: fadeIn 0.5s; }
+        .section-quiz.active { display: block; }
+
+        .btn-back-floating {
+            position: fixed; top: 25px; left: 25px; z-index: 999; background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 10px 20px; border-radius: 50px;
+            text-decoration: none; backdrop-filter: blur(5px); transition: 0.3s;
+        }
+        .btn-back-floating:hover { background: var(--neon-red); border-color: var(--neon-red); }
+
+        @media (max-width: 600px) { .btn-back-floating { position: static; display: inline-block; margin: 20px; } }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="btn-back-floating"><i class="fas fa-arrow-left"></i> KEMBALI KE MENU</a>
+
+    <div class="container quiz-container fade-up">
+        
+        <div class="quiz-header">
+            <h1 class="glitch" data-text="UJI KOMPETENSI" style="font-size: 3rem; color: #fff; margin-bottom: 10px;">UJI KOMPETENSI</h1>
+            <p class="text-mono text-dim">EVALUASI STUDI KASUS & ANALISIS</p>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchQuiz('bab1')" id="btn-bab1">
+                <i class="fas fa-user-shield"></i> SOAL BAB 1
+            </button>
+            <button class="tab-btn" onclick="switchQuiz('bab2')" id="btn-bab2">
+                <i class="fas fa-globe"></i> SOAL BAB 2
+            </button>
+        </div>
+
+        <div id="bab1" class="section-quiz active">
+            <form id="formBab1">
+                <div id="containerBab1"></div>
+                <button type="button" id="btnSubmitBab1" class="btn-submit" onclick="submitScore('bab1')">KIRIM JAWABAN BAB 1</button>
+            </form>
+            
+            <div id="resultBab1" class="result-panel">
+                <h2 style="color:white; margin-bottom:20px;">HASIL BAB 1 TERKIRIM!</h2>
+                <div class="score-circle" id="scoreValBab1">0</div>
+                <p id="feedbackBab1" style="color:#cbd5e1;">Menghubungi Server...</p>
+                <button onclick="location.reload()" class="btn-tactical" style="margin-top:20px; border-color:white; color:white;">ULANGI TES</button>
+            </div>
+        </div>
+
+        <div id="bab2" class="section-quiz">
+            <form id="formBab2">
+                <div id="containerBab2"></div>
+                <button type="button" id="btnSubmitBab2" class="btn-submit" style="background: linear-gradient(45deg, var(--neon-cyan), #0891b2);" onclick="submitScore('bab2')">KIRIM JAWABAN BAB 2</button>
+            </form>
+
+            <div id="resultBab2" class="result-panel" style="border-color: var(--neon-cyan);">
+                <h2 style="color:white; margin-bottom:20px;">HASIL BAB 2 TERKIRIM!</h2>
+                <div class="score-circle" id="scoreValBab2" style="border-color: var(--neon-cyan); color: var(--neon-cyan); box-shadow: 0 0 30px rgba(6, 182, 212, 0.3);">0</div>
+                <p id="feedbackBab2" style="color:#cbd5e1;">Menghubungi Server...</p>
+                <button onclick="location.reload()" class="btn-tactical" style="margin-top:20px; border-color:white; color:white;">ULANGI TES</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. KONFIGURASI EMAILJS (ISI DISINI) ---
+        // GANTI placeholder ini dengan ID akun EmailJS Anda setelah mendaftar
+        
+        const EMAIL_PUBLIC_KEY = "GANTI_DENGAN_PUBLIC_KEY_ANDA"; // Contoh: "user_12345xxx"
+        const EMAIL_SERVICE_ID = "GANTI_DENGAN_SERVICE_ID_ANDA"; // Contoh: "service_gmail"
+        const EMAIL_TEMPLATE_ID = "GANTI_DENGAN_TEMPLATE_ID_ANDA"; // Contoh: "template_ujian"
+
+        // Inisialisasi EmailJS
+        (function(){
+            emailjs.init(EMAIL_PUBLIC_KEY);
+        })();
+
+        // --- 2. DATABASE SOAL (Studi Kasus 10 Soal per Bab) ---
+        const dbSoal = {
+            bab1: [
+                { case: "Andi melihat tetangganya yang berbeda agama sedang gotong royong membersihkan tempat ibadah mereka menjelang hari raya. Andi sedang libur sekolah.", q: "Tindakan yang paling mencerminkan Sila ke-1 dan ke-2 Pancasila adalah...", opts: ["Menonton saja karena itu bukan tempat ibadahnya.", "Menawarkan bantuan sekadarnya untuk menjaga kerukunan.", "Ikut membantu membersihkan lingkungan luar sebagai wujud toleransi dan kemanusiaan.", "Melaporkan ke RT karena membuat keramaian."], ans: 2 },
+                { case: "Di grup WhatsApp keluarga, Paman menyebarkan berita bahwa vaksin menyebabkan penyakit aneh. Berita itu belum terkonfirmasi kebenarannya.", q: "Sikap 'Saring sebelum Sharing' (Sila ke-3) yang tepat dilakukan adalah...", opts: ["Langsung menyebarkan ke grup teman sekolah.", "Memarahi Paman di grup karena menyebar hoaks.", "Mengecek kebenaran berita di situs resmi, lalu menginfokan fakta dengan sopan.", "Keluar dari grup keluarga agar tidak pusing."], ans: 2 },
+                { case: "Saat pemilihan Ketua OSIS, kandidat A adalah teman dekat Budi. Namun, Kandidat B memiliki visi misi yang lebih jelas dan realistis untuk kemajuan sekolah.", q: "Berdasarkan Sila ke-4 (Kerakyatan/Demokrasi), sikap Budi seharusnya...", opts: ["Memilih A karena solidaritas teman.", "Memilih B secara objektif demi kemajuan bersama.", "Golput (tidak memilih) agar tidak menyakiti A.", "Mengajak teman lain untuk memusuhi B."], ans: 1 },
+                { case: "Sari melihat teman sekelasnya, Rina, sering diejek karena logat bicaranya yang medok (khas daerah). Rina terlihat sedih.", q: "Tindakan Sari yang mencerminkan Sila ke-2 (Kemanusiaan) dan Sila ke-3 (Persatuan) adalah...", opts: ["Ikut tertawa agar dianggap gaul.", "Diam saja karena takut ikut diejek.", "Menegur teman yang mengejek dan menemani Rina.", "Melaporkan Rina ke guru BK."], ans: 2 },
+                { case: "Sekolah mengadakan penggalangan dana untuk korban gempa di daerah lain. Uang jajan Tono pas-pasan hari ini.", q: "Penerapan Pancasila yang paling tepat bagi Tono adalah...", opts: ["Tidak menyumbang karena uangnya sedikit.", "Menyumbang semampunya dengan ikhlas.", "Meminta uang lebih ke orang tua dengan memaksa.", "Pura-pura tidak tahu ada penggalangan dana."], ans: 1 },
+                { case: "Dalam diskusi kelompok, pendapat Siti ditolak oleh mayoritas anggota. Siti merasa pendapatnya paling benar.", q: "Sikap yang sesuai dengan nilai Musyawarah Mufakat adalah...", opts: ["Marah dan tidak mau mengerjakan tugas kelompok.", "Menerima keputusan kelompok dengan lapang dada (Legowo).", "Memaksa anggota lain mengikuti pendapatnya.", "Keluar dari kelompok diam-diam."], ans: 1 },
+                { case: "Joni menemukan kunci jawaban ujian akhir tersebar di internet. Banyak temannya yang menggunakannya.", q: "Sikap integritas (Sila 1 - Ketuhanan) yang harus diambil Joni adalah...", opts: ["Ikut menggunakannya agar nilainya bagus.", "Menggunakannya sedikit saja sebagai referensi.", "Mengabaikan kunci jawaban dan belajar jujur.", "Menjual kunci jawaban tersebut ke teman lain."], ans: 2 },
+                { case: "Keluarga Pak Budi hidup mewah dan sering memamerkan kekayaan di media sosial, sementara tetangganya kesulitan makan.", q: "Perilaku ini bertentangan dengan Sila ke-5 (Keadilan Sosial), khususnya butir...", opts: ["Suka bekerja keras.", "Menghargai hasil karya orang lain.", "Tidak bergaya hidup mewah dan boros.", "Gemar melakukan kegiatan kemanusiaan."], ans: 2 },
+                { case: "Di media sosial, ada perdebatan panas tentang isu politik yang menyinggung SARA. Kolom komentar penuh caci maki.", q: "Sebagai pelajar Pancasila, respon terbaik adalah...", opts: ["Ikut berkomentar membela salah satu pihak dengan kasar.", "Memprovokasi agar suasana makin panas.", "Tidak terpancing emosi dan tidak ikut berkomentar buruk.", "Membagikan screenshot perdebatan agar viral."], ans: 2 },
+                { case: "Sekolah mewajibkan penggunaan sepatu hitam polos. Doni memiliki sepatu mahal berwarna-warni dan ingin memakainya ke sekolah.", q: "Sikap kepatuhan hukum dan kewajiban (Sila 5) adalah...", opts: ["Memakai sepatu warna-warni karena itu hak asasi.", "Mematuhi aturan sekolah demi ketertiban bersama.", "Memakai sepatu hitam hanya saat ada guru.", "Memprotes aturan sekolah dengan anarkis."], ans: 1 }
+            ],
+            bab2: [
+                { case: "Budaya K-Pop sangat digemari remaja Indonesia. Beberapa remaja mulai meniru gaya hidup hedonisme yang ditampilkan di drama Korea.", q: "Sikap yang tepat dalam menghadapi globalisasi budaya ini sesuai Pancasila adalah...", opts: ["Menolak semua budaya Korea masuk ke Indonesia.", "Mengikuti semua gaya hidup tersebut agar terlihat modern.", "Menerima budaya asing sebagai hiburan, namun tetap memegang teguh nilai kesederhanaan dan sopan santun (Filter).", "Malu dengan budaya Indonesia yang dianggap kuno."], ans: 2 },
+                { case: "Indonesia memiliki 'Bonus Demografi' di mana jumlah usia produktif sangat banyak. Namun, lapangan kerja terbatas.", q: "Sebagai pelajar, cara terbaik memanfaatkan peluang (Opportunity) ini adalah...", opts: ["Menunggu bantuan pemerintah.", "Meningkatkan skill dan literasi digital agar kompetitif di pasar kerja global.", "Bekerja apa adanya tanpa perlu pendidikan tinggi.", "Menyalahkan pemerintah atas pengangguran."], ans: 1 },
+                { case: "Ancaman ideologi radikal banyak menyasar anak muda melalui media sosial.", q: "Strategi pertahanan diri (Leitstar) yang paling tepat adalah...", opts: ["Menutup semua akun media sosial.", "Memperdalam pemahaman agama dan nilai Pancasila agar tidak mudah terdoktrin.", "Mencurigai semua orang yang berbeda penampilan.", "Ikut menyebarkan paham tersebut karena penasaran."], ans: 1 },
+                { case: "Produk UMKM lokal kalah bersaing dengan produk impor murah dari China di marketplace.", q: "Bentuk bela negara dalam ekonomi (Ekonomi Pancasila) yang bisa kita lakukan adalah...", opts: ["Membeli produk impor karena lebih murah.", "Membeli dan mempromosikan produk lokal (Cinta Produk Indonesia).", "Membully penjual produk impor.", "Masa bodoh dengan ekonomi negara."], ans: 1 },
+                { case: "Data pribadi jutaan penduduk bocor diretas oleh hacker luar negeri.", q: "Ini merupakan bentuk ancaman di bidang...", opts: ["Ideologi", "Militer Konvensional", "Pertahanan Siber (Cyber Defense)", "Sosial Budaya"], ans: 2 },
+                { case: "Dalam analisis SWOT, Indonesia memiliki kekayaan alam melimpah (Strength), tetapi rawan bencana alam (Threat).", q: "Strategi yang tepat adalah...", opts: ["Mengeksploitasi alam habis-habisan sebelum bencana datang.", "Membangun infrastruktur tahan bencana dan mengelola SDA secara berkelanjutan.", "Pindah warga negara ke tempat aman.", "Menyerah pada nasib."], ans: 1 },
+                { case: "Globalisasi membuat nilai individualisme (mementingkan diri sendiri) semakin kuat di kota besar.", q: "Untuk melawan ancaman ini, kita harus menguatkan nilai...", opts: ["Liberalisme", "Gotong Royong", "Kapitalisme", "Komunisme"], ans: 1 },
+                { case: "Banyak ilmuwan pintar Indonesia yang memilih bekerja di luar negeri (Brain Drain) karena gaji lebih tinggi.", q: "Tantangan bagi negara dalam kasus ini adalah...", opts: ["Melarang warga negara pergi ke luar negeri.", "Menciptakan ekosistem riset dan penghargaan yang layak di dalam negeri.", "Membiarkan saja karena itu hak asasi.", "Mencabut kewarganegaraan mereka."], ans: 1 },
+                { case: "Teknologi AI (Kecerdasan Buatan) berkembang pesat. Ada kekhawatiran AI menggantikan peran manusia.", q: "Sikap adaptif berdasarkan nilai 'Bernalar Kritis' adalah...", opts: ["Menolak penggunaan teknologi sama sekali.", "Menggunakan AI sebagai alat bantu untuk meningkatkan produktivitas, bukan pengganti akal budi.", "Pasrah jika pekerjaan diambil alih mesin.", "Mengandalkan AI sepenuhnya untuk mengerjakan tugas sekolah."], ans: 1 },
+                { case: "Indonesia menganut politik luar negeri 'Bebas Aktif' di tengah konflik negara-negara besar.", q: "Makna 'Bebas Aktif' yang sesuai Pancasila adalah...", opts: ["Memihak negara yang paling kuat/kaya.", "Tidak memihak blok manapun, tapi aktif mengupayakan perdamaian dunia.", "Menjadi negara netral yang pasif dan diam saja.", "Memusuhi semua negara yang sedang berperang."], ans: 1 }
+            ]
+        };
+
+        window.onload = function() {
+            renderQuiz('bab1');
+            renderQuiz('bab2');
+        }
+
+        function renderQuiz(bab) {
+            const container = document.getElementById('container' + bab.charAt(0).toUpperCase() + bab.slice(1));
+            const data = dbSoal[bab];
+            let html = '';
+
+            data.forEach((item, index) => {
+                html += `
+                <div class="question-card">
+                    <span class="case-study-label">STUDI KASUS ${index + 1}</span>
+                    <div class="question-text"><strong>Kasus:</strong> "${item.case}"<br><br><strong>Pertanyaan:</strong> ${item.q}</div>
+                    <div class="options-grid">
+                        ${item.opts.map((opt, i) => `<label class="option-label"><input type="radio" name="${bab}_q${index}" value="${i}"> ${opt}</label>`).join('')}
+                    </div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function switchQuiz(babId) {
+            document.querySelectorAll('.section-quiz').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(babId).classList.add('active');
+            document.getElementById('btn-' + babId).classList.add('active');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // --- 3. FUNGSI SUBMIT & KIRIM EMAIL ---
+        function submitScore(bab) {
+            const data = dbSoal[bab];
+            let correct = 0;
+            let answered = 0;
+
+            for (let i = 0; i < data.length; i++) {
+                const selected = document.querySelector(`input[name="${bab}_q${i}"]:checked`);
+                if (selected) {
+                    answered++;
+                    if (parseInt(selected.value) === data[i].ans) correct++;
+                }
+            }
+
+            if (answered < data.length) {
+                alert("Harap jawab semua soal sebelum mengirim!");
+                return;
+            }
+
+            // Hitung Skor (1 soal benar = 10 poin)
+            const score = correct * 10;
+            
+            // Ambil Data Siswa dari Session
+            const studentName = sessionStorage.getItem('agent_name') || "ANONYMOUS";
+            const studentClass = sessionStorage.getItem('agent_class') || "-";
+            const quizName = bab === 'bab1' ? "Uji Kompetensi Bab 1" : "Uji Kompetensi Bab 2";
+
+            // UI Update: Loading
+            const btnId = bab === 'bab1' ? 'btnSubmitBab1' : 'btnSubmitBab2';
+            const btn = document.getElementById(btnId);
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> MENGIRIM HASIL...';
+            btn.classList.add('loading');
+
+            // Data yang akan dikirim ke EmailJS
+            const templateParams = {
+                to_email: "yohanaimpian@gmail.com", // Tujuan Guru
+                from_name: studentName,
+                from_class: studentClass,
+                quiz_name: quizName,
+                score: score,
+                correct_count: correct,
+                total_question: data.length
+            };
+
+            // KIRIM EMAIL VIA EMAILJS
+            emailjs.send(EMAIL_SERVICE_ID, EMAIL_TEMPLATE_ID, templateParams)
+            .then(function() {
+                // SUKSES
+                showResult(bab, score, true);
+            }, function(error) {
+                // GAGAL
+                console.error('FAILED...', error);
+                showResult(bab, score, false);
+            });
+        }
+
+        function showResult(bab, score, isSent) {
+            const form = document.getElementById(bab === 'bab1' ? 'formBab1' : 'formBab2');
+            const containerRes = document.getElementById(bab === 'bab1' ? 'resultBab1' : 'resultBab2');
+            const scoreVal = document.getElementById(bab === 'bab1' ? 'scoreValBab1' : 'scoreValBab2');
+            const feedback = document.getElementById(bab === 'bab1' ? 'feedbackBab1' : 'feedbackBab2');
+
+            form.style.display = 'none';
+            containerRes.style.display = 'block';
+            containerRes.classList.add('fade-up');
+
+            // Animasi Skor
+            let current = 0;
+            const timer = setInterval(() => {
+                current++;
+                scoreVal.innerText = current;
+                if (current >= score) clearInterval(timer);
+            }, 20);
+
+            // Feedback Pesan
+            let statusEmail = isSent ? "<br><small style='color:#10B981'>[LAPORAN TERKIRIM KE GURU]</small>" : "<br><small style='color:#EF4444'>[GAGAL KIRIM LAPORAN: Laporkan Nilai Manual ke Guru!]</small>";
+            
+            if(score >= 80) feedback.innerHTML = "<span style='color:#10B981'>LUAR BIASA!</span> Analisis tajam." + statusEmail;
+            else if(score >= 60) feedback.innerHTML = "<span style='color:#F59E0B'>CUKUP BAIK.</span> Tingkatkan lagi." + statusEmail;
+            else feedback.innerHTML = "<span style='color:#EF4444'>REMEDIAL.</span> Pelajari modul." + statusEmail;
+        }
+    </script>
+</body>
+</html>

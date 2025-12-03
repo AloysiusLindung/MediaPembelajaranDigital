@@ -1,0 +1,211 @@
+/* =========================================
+   CIVICLOKA: GLASSMORPHISM & UI COMPONENTS
+   File: assets/css/glass.css
+   Fokus: Panel, Tombol, Input, dan Card
+   ========================================= */
+
+/* ------------------------------------------------
+   1. GLASS PANEL (PANEL KACA UTAMA)
+   Wadah utama untuk konten materi dan soal
+   ------------------------------------------------ */
+.glass-panel {
+    /* Transparansi & Blur [cite: 876-878, 1054-1056] */
+    background: var(--glass-bg); 
+    backdrop-filter: blur(12px);         
+    -webkit-backdrop-filter: blur(12px); /* Safari Support */
+    
+    /* Border & Shadow untuk kedalaman 3D [cite: 879-880, 1057-1058] */
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    
+    border-radius: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden; /* Agar kilauan tidak keluar border */
+}
+
+/* Efek Kilauan (Shine) di sudut atas panel */
+.glass-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -50%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to right, 
+        transparent, 
+        rgba(255, 255, 255, 0.05), 
+        transparent
+    );
+    transform: skewX(-25deg);
+    pointer-events: none;
+    transition: left 0.5s;
+}
+
+.glass-panel:hover::before {
+    left: 100%; /* Kilauan bergerak saat dihover */
+}
+
+/* ------------------------------------------------
+   2. TACTICAL BUTTONS (TOMBOL TAKTIS)
+   Tombol dengan sudut terpotong (Chamfered)
+   ------------------------------------------------ */
+.btn-tactical {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 14px 32px;
+    
+    /* Tipografi Tombol */
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-decoration: none;
+    
+    /* Warna Dasar (Cyan - Default) */
+    background: transparent;
+    color: var(--neon-cyan);
+    border: 1px solid var(--neon-cyan);
+    
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    
+    /* BENTUK TAKTIS: Sudut terpotong [cite: 1060] */
+    clip-path: polygon(
+        12px 0, 100% 0, 
+        100% calc(100% - 12px), calc(100% - 12px) 100%, 
+        0 100%, 0 12px
+    );
+}
+
+/* Hover State: Menyala */
+.btn-tactical:hover {
+    background: var(--neon-cyan);
+    color: #000; /* Teks hitam agar terbaca */
+    box-shadow: 0 0 25px var(--neon-cyan); /* Efek Neon Glow */
+    text-shadow: none;
+    transform: translateY(-2px);
+}
+
+/* Active State: Ditekan */
+.btn-tactical:active {
+    transform: scale(0.96);
+    box-shadow: 0 0 10px var(--neon-cyan);
+}
+
+/* --- VARIAN WARNA TOMBOL --- */
+
+/* Varian Emas (Primary/Start) */
+.btn-start, .btn-gold {
+    color: var(--neon-gold);
+    border-color: var(--neon-gold);
+}
+
+.btn-start:hover, .btn-gold:hover {
+    background: var(--neon-gold);
+    box-shadow: 0 0 25px var(--neon-gold);
+    color: #000;
+}
+
+/* Varian Merah (Bahaya/Stop/Reset) */
+.btn-danger {
+    color: var(--neon-red);
+    border-color: var(--neon-red);
+}
+
+.btn-danger:hover {
+    background: var(--neon-red);
+    box-shadow: 0 0 25px var(--neon-red);
+    color: #fff;
+}
+
+/* ------------------------------------------------
+   3. INPUT FIELDS (FORMULIR KACA)
+   Untuk input Nama & Kelas
+   ------------------------------------------------ */
+.input-glass {
+    width: 100%;
+    padding: 15px 20px;
+    margin-top: 8px;
+    
+    /* Transparan Gelap */
+    background: rgba(15, 23, 42, 0.6); 
+    border: 1px solid var(--glass-border);
+    border-radius: 8px; /* Sudut sedikit membulat */
+    
+    /* Teks Input */
+    color: var(--text-main);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    letter-spacing: 1px;
+    
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+/* Saat Input Diklik (Fokus) */
+.input-glass:focus {
+    border-color: var(--neon-cyan);
+    background: rgba(15, 23, 42, 0.8);
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.3); /* Glow halus */
+}
+
+/* Placeholder Text */
+.input-glass::placeholder {
+    color: var(--text-dim);
+    opacity: 0.6;
+}
+
+/* ------------------------------------------------
+   4. CARD INTERACTION (EFEK KARTU MISI)
+   Khusus untuk kartu di halaman depan
+   ------------------------------------------------ */
+.mission-card {
+    /* Mewarisi sifat .glass-panel */
+    padding: 30px;
+    width: 300px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-top: 4px solid transparent; /* Garis atas untuk aksen */
+}
+
+/* Hover Effect: Melayang & Bersinar */
+.mission-card:hover {
+    transform: translateY(-10px); /* Naik ke atas */
+    background: rgba(30, 41, 59, 0.8); /* Lebih pekat */
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Warna Border Atas Spesifik Per Misi */
+.border-gold { border-top-color: var(--neon-gold); }
+.border-cyan { border-top-color: var(--neon-cyan); }
+
+/* ------------------------------------------------
+   5. AKSESIBILITAS: HIGH CONTRAST MODE
+   Akan aktif jika toggle aksesibilitas dinyalakan
+   [cite: 908]
+   ------------------------------------------------ */
+body.high-contrast .glass-panel {
+    background: #000000; /* Hitam Pekat */
+    backdrop-filter: none; /* Matikan blur */
+    border: 2px solid #FFFFFF; /* Border putih tebal */
+    box-shadow: none;
+}
+
+body.high-contrast .btn-tactical {
+    background: #000;
+    border: 2px solid #FFF;
+    color: #FFF;
+    box-shadow: none;
+}
+
+body.high-contrast .btn-tactical:hover {
+    background: #FFF;
+    color: #000;
+}

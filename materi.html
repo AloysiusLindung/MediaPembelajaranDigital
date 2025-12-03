@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARSIP DATA INTELIJEN - CIVICLOKA</title>
+    
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/glass.css">
+    <link rel="stylesheet" href="assets/css/animate.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* LAYOUT UTAMA */
+        .archive-container { max-width: 1200px; margin: 0 auto; padding-bottom: 100px; }
+        .archive-header { text-align: center; padding: 40px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 30px; }
+        
+        /* NAVIGASI BAB */
+        .tab-nav { display: flex; justify-content: center; gap: 20px; margin-bottom: 50px; flex-wrap: wrap; }
+        .tab-btn {
+            background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); color: var(--text-dim);
+            padding: 15px 40px; border-radius: 50px; cursor: pointer; font-family: var(--font-head);
+            font-size: 1.2rem; transition: all 0.3s; min-width: 200px; position: relative; overflow: hidden;
+        }
+        .tab-btn.active { 
+            background: rgba(255, 255, 255, 0.1); color: #fff; box-shadow: 0 0 25px rgba(0,0,0,0.5); transform: scale(1.05);
+        }
+        #btn-bab1.active { border-color: var(--neon-gold); color: var(--neon-gold); }
+        #btn-bab2.active { border-color: var(--neon-cyan); color: var(--neon-cyan); }
+
+        /* KOTAK PERTEMUAN */
+        .meeting-block {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 50px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s;
+        }
+        .meeting-block:hover { transform: translateY(-5px); }
+
+        /* BADGE & JUDUL */
+        .meeting-badge {
+            display: inline-block; padding: 6px 16px; border-radius: 8px; font-family: var(--font-mono);
+            font-size: 0.9rem; margin-bottom: 15px; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;
+        }
+        .badge-gold { background: rgba(245, 158, 11, 0.15); border: 1px solid var(--neon-gold); color: var(--neon-gold); }
+        .badge-cyan { background: rgba(6, 182, 212, 0.15); border: 1px solid var(--neon-cyan); color: var(--neon-cyan); }
+        .badge-gray { background: rgba(255, 255, 255, 0.1); border: 1px solid #aaa; color: #aaa; }
+
+        .meeting-title { font-family: var(--font-head); font-size: 2rem; margin-bottom: 25px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+
+        /* VIDEO */
+        .video-wrapper {
+            position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 16px;
+            border: 2px solid rgba(255,255,255,0.1); margin: 30px 0; box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        /* KONTEN TEKS LENGKAP */
+        .material-content {
+            font-family: var(--font-body); color: #cbd5e1; line-height: 1.9; font-size: 1.05rem; text-align: justify;
+            padding: 30px; background: rgba(0,0,0,0.3); border-radius: 16px; margin-top: 30px;
+        }
+        .material-content h3 { color: #fff; font-size: 1.4rem; margin-top: 30px; margin-bottom: 15px; font-family: var(--font-head); }
+        .material-content h4 { 
+            color: #fff; margin-top: 25px; margin-bottom: 10px; font-size: 1.1rem; 
+            border-left: 4px solid; padding-left: 15px; background: linear-gradient(90deg, rgba(255,255,255,0.05), transparent); padding-top:5px; padding-bottom:5px;
+        }
+        .material-content ul { padding-left: 25px; margin-bottom: 20px; }
+        .material-content li { margin-bottom: 10px; }
+        .material-content p { margin-bottom: 15px; }
+        
+        /* HIGHLIGHT BOX */
+        .highlight-box {
+            background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 10px; border: 1px dashed rgba(255,255,255,0.3); margin: 20px 0;
+        }
+
+        /* SECTION CONTROL */
+        .bab-section { display: none; animation: fadeIn 0.8s; }
+        .bab-section.active { display: block; }
+
+        /* FOOTER NAV */
+        .btn-back-floating {
+            position: fixed; top: 25px; left: 25px; z-index: 999; background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 12px 25px; border-radius: 50px;
+            text-decoration: none; backdrop-filter: blur(5px); font-weight: bold; transition: 0.3s;
+        }
+        .btn-back-floating:hover { background: var(--neon-red); border-color: var(--neon-red); }
+
+        .nav-footer { text-align: center; margin-top: 60px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); }
+
+        @media (max-width: 768px) {
+            .meeting-title { font-size: 1.5rem; }
+            .material-content { padding: 15px; font-size: 0.95rem; }
+            .btn-back-floating { position: static; display: inline-block; margin: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="btn-back-floating"><i class="fas fa-arrow-left"></i> KEMBALI KE DASHBOARD</a>
+
+    <div class="container archive-container fade-up">
+        
+        <div class="archive-header">
+            <h1 class="glitch" data-text="MODUL PEMBELAJARAN TERPADU" style="font-size: 3rem; color: #fff; margin-bottom: 10px;">MODUL PEMBELAJARAN</h1>
+            <p class="text-mono text-dim">KURIKULUM MERDEKA: FASE F (KELAS XII)</p>
+        </div>
+
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchBab('bab1')" id="btn-bab1">
+                <i class="fas fa-user-shield"></i> BAB 1: KESEHARIAN
+            </button>
+            <button class="tab-btn" onclick="switchBab('bab2')" id="btn-bab2">
+                <i class="fas fa-globe"></i> BAB 2: GLOBAL
+            </button>
+        </div>
+
+        <div id="bab1" class="bab-section active">
+            
+            <div class="meeting-block">
+                <span class="meeting-badge badge-gold">PERTEMUAN 1</span>
+                <h2 class="meeting-title text-gold">A. SAYA DAN PANCASILA</h2>
+                
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/ethXPY0e7i8" title="Materi Pertemuan 1" allowfullscreen></iframe>
+                </div>
+
+                    <div class="material-content" style="border-left: 4px solid var(--neon-gold);">
+                        <h3>1. Hakikat Pancasila bagi Individu</h3>
+                        <p>Pancasila seringkali hanya dianggap sebagai hapalan teks saat upacara. Padahal, Pancasila adalah <strong>Kode Genetik (DNA)</strong> bangsa Indonesia. Hubungan "Saya dan Pancasila" bersifat personal dan melekat; kita tidak bisa mengaku orang Indonesia jika nilai-nilai ini tidak mengalir dalam darah dan tindakan kita.</p>
+                        
+                        <h4 style="border-color: var(--neon-gold);">2. Dua Peran Besar Pancasila (Soekarno)</h4>
+                        <ul>
+                            <li><strong>Meja Statis (Titik Temu):</strong> Pancasila adalah wadah yang menyatukan segala perbedaan suku, agama, dan ras. Tanpa "meja" ini, Indonesia akan tercerai-berai. Di sini, Pancasila bersifat tetap dan tidak berubah.</li>
+                            <li><strong>Leitstar Dinamis (Bintang Penuntun):</strong> Pancasila memberikan arah ke mana bangsa ini berjalan. Ia bersifat dinamis, mampu beradaptasi dengan zaman tanpa kehilangan jati dirinya, menuntun kita mencapai masyarakat adil dan makmur.</li>
+                        </ul>
+
+                        <h4 style="border-color: var(--neon-gold);">3. Profil Pelajar Pancasila</h4>
+                        <p>Dalam Kurikulum Merdeka, tujuan akhir pendidikan adalah membentuk profil pelajar yang:</p>
+                        <div class="highlight-box">
+                            <ul style="margin:0;">
+                                <li>Beriman, bertakwa kepada Tuhan YME, dan berakhlak mulia.</li>
+                                <li>Berkebinekaan Global (Mencintai budaya lokal namun terbuka pada dunia).</li>
+                                <li>Bergotong Royong (Kolaborasi).</li>
+                                <li>Mandiri, Bernalar Kritis, dan Kreatif.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            <div class="meeting-block">
+                <span class="meeting-badge badge-gold">PERTEMUAN 2</span>
+                <h2 class="meeting-title text-gold">B. SAYA BER-PANCASILA</h2>
+                
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/P88zNx8tfGQ" title="Materi Pertemuan 2" allowfullscreen></iframe>
+                </div>
+
+                <div class="material-content" style="border-left: 4px solid var(--neon-gold);">
+                    <h3>1. Pancasila sebagai "Kata Kerja"</h3>
+                    <p>"Ber-Pancasila" adalah predikat aktif. Artinya, nilai Pancasila harus termanifestasi (wujud) dalam laku sehari-hari melalui proses <strong>Habituasi</strong> (Pembiasaan). Dari tahu (kognitif), menjadi rasa (afektif), lalu menjadi aksi (psikomotorik).</p>
+
+                    <h4 style="border-color: var(--neon-gold);">2. Penerapan di Lingkungan Keluarga (Micro)</h4>
+                    <p>Keluarga adalah laboratorium pertama Pancasila. Contoh penerapannya:</p>
+                    <ul>
+                        <li><strong>Sila 1:</strong> Membiasakan doa bersama sebelum makan.</li>
+                        <li><strong>Sila 2:</strong> Saling menyayangi antar kakak-adik, tidak kasar.</li>
+                        <li><strong>Sila 5:</strong> Bersikap hemat, menabung, dan membagi tugas rumah dengan adil.</li>
+                    </ul>
+
+                    <h4 style="border-color: var(--neon-gold);">3. Penerapan di Lingkungan Sekolah (Meso)</h4>
+                    <p>Sekolah adalah tempat menguji integritas sosial.</p>
+                    <ul>
+                        <li><strong>Integritas Akademik:</strong> Tidak menyontek saat ujian adalah wujud kejujuran (Sila 1 & 2).</li>
+                        <li><strong>Anti-Perundungan (Bullying):</strong> Membela teman yang lemah dan tidak melakukan diskriminasi SARA (Sila 2 & 3).</li>
+                        <li><strong>Demokrasi OSIS:</strong> Memilih ketua kelas/OSIS berdasarkan kemampuan, bukan karena teman satu geng (Sila 4).</li>
+                    </ul>
+
+                    <h4 style="border-color: var(--neon-gold);">4. Penerapan di Masyarakat (Macro)</h4>
+                    <ul>
+                        <li>Aktif dalam kegiatan Karang Taruna atau kerja bakti kampung.</li>
+                        <li>Bijak bermedia sosial: Tidak menyebarkan hoaks atau ujaran kebencian yang memecah belah (Sila 3).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="meeting-block" style="border: 2px dashed rgba(255,255,255,0.2); background: rgba(0,0,0,0.2);">
+                <span class="meeting-badge badge-gray">PERTEMUAN 3</span>
+                <h2 class="meeting-title" style="color: #ccc;">C. LAPORAN RANCANGAN PORTOFOLIO</h2>
+                
+                <div style="display: flex; align-items: center; gap: 30px; flex-wrap: wrap; justify-content: center;">
+                    <i class="fas fa-folder-open" style="font-size: 5rem; color: #555;"></i>
+                    <div style="text-align: left; max-width: 600px;">
+                        <h4 style="color: #fff; margin-top: 0;">Agenda Pertemuan:</h4>
+                        <p style="color: #aaa; margin-bottom: 10px;">Pada pertemuan ini, tidak ada materi baru. Siswa difokuskan untuk menyusun dan mempresentasikan:</p>
+                        <ul style="color: #ccc;">
+                            <li>Laporan observasi penerapan Pancasila di lingkungan sekitar.</li>
+                            <li>Rancangan aksi nyata (Proyek Kewarganegaraan).</li>
+                            <li>Refleksi diri: "Seberapa Pancasila-kah Saya?"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-footer">
+                <p class="text-dim">Sudah menguasai materi Bab 1?</p>
+                <a href="mission1.html" class="btn-tactical" style="border-color: var(--neon-gold); color: var(--neon-gold);">
+                    <i class="fas fa-play"></i> MASUK MISI 1 & UJI KOMPETENSI
+                </a>
+            </div>
+
+        </div>
+
+
+        <div id="bab2" class="bab-section">
+            
+            <div class="meeting-block">
+                <span class="meeting-badge badge-cyan">PERTEMUAN 4</span>
+                <h2 class="meeting-title text-cyan">A. KEKUATAN & PELUANG BANGSA INDONESIA</h2>
+                
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/y9HlFYLAD4g" title="Materi Pertemuan 4" allowfullscreen></iframe>
+                </div>
+
+                <div class="material-content" style="border-left: 4px solid var(--neon-cyan);">
+                    <h3>1. Analisis SWOT: Faktor Positif</h3>
+                    <p>Untuk bertahan di era globalisasi, kita perlu mengenali modal dasar bangsa kita.</p>
+
+                    <h4 style="border-color: var(--neon-cyan);">STRENGTH (Kekuatan Internal)</h4>
+                    <ul>
+                        <li><strong>Sumber Daya Alam (SDA):</strong> Indonesia adalah paru-paru dunia (hutan tropis), penghasil nikel terbesar (bahan baterai EV), dan memiliki potensi energi terbarukan yang melimpah.</li>
+                        <li><strong>Modal Sosial & Budaya:</strong> Tradisi <em>Gotong Royong</em> adalah kekuatan perekat yang jarang dimiliki bangsa individualis. Keragaman budaya juga menjadi daya tarik pariwisata dunia.</li>
+                        <li><strong>Geopolitik Strategis:</strong> Posisi silang di antara dua benua dan dua samudra menjadikan kita jalur perdagangan utama.</li>
+                    </ul>
+
+                    <h4 style="border-color: var(--neon-cyan);">OPPORTUNITY (Peluang Eksternal)</h4>
+                    <ul>
+                        <li><strong>Bonus Demografi:</strong> Hingga tahun 2030-2045, 70% penduduk Indonesia adalah usia produktif. Jika dikelola baik, ini akan melesatkan ekonomi negara.</li>
+                        <li><strong>Ekonomi Digital:</strong> Penetrasi internet yang tinggi menjadikan Indonesia pasar ekonomi digital terbesar di Asia Tenggara (E-Commerce, Start-up).</li>
+                        <li><strong>Diplomasi Internasional:</strong> Peran aktif Indonesia di G20 dan ASEAN menunjukkan kepercayaan dunia yang tinggi.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="meeting-block">
+                <span class="meeting-badge badge-cyan">PERTEMUAN 5</span>
+                <h2 class="meeting-title text-cyan">B. KELEMAHAN & TANTANGAN BANGSA INDONESIA</h2>
+                
+                <div class="video-wrapper">
+                    <iframe src="https://www.youtube.com/embed/2LbEYij3AJw" title="Materi Pertemuan 5" allowfullscreen></iframe>
+                </div>
+
+                <div class="material-content" style="border-left: 4px solid var(--neon-cyan);">
+                    <h3>1. Analisis SWOT: Faktor Negatif</h3>
+                    <p>Selain potensi, kita harus jujur mengakui kerentanan yang ada agar bisa diperbaiki.</p>
+
+                    <h4 style="border-color: var(--neon-cyan);">WEAKNESS (Kelemahan Internal)</h4>
+                    <ul>
+                        <li><strong>Kualitas SDM & Literasi:</strong> Skor PISA Indonesia masih rendah. Kemampuan literasi dan numerasi perlu ditingkatkan agar Bonus Demografi tidak menjadi Bencana Demografi.</li>
+                        <li><strong>Infrastruktur Belum Merata:</strong> Kesenjangan pembangunan antara Jawa dan luar Jawa masih terasa, menghambat distribusi ekonomi.</li>
+                        <li><strong>Masalah Integritas (Korupsi):</strong> Indeks Persepsi Korupsi yang stagnan menghambat investasi dan merugikan rakyat triliunan rupiah.</li>
+                    </ul>
+
+                    <h4 style="border-color: var(--neon-cyan);">THREAT (Ancaman Eksternal)</h4>
+                    <ul>
+                        <li><strong>Ideologi Transnasional:</strong> Masuknya paham radikalisme, ekstremisme, dan terorisme yang ingin mengganti Pancasila.</li>
+                        <li><strong>Hegemoni Budaya (Neo-Kolonialisme):</strong> Gaya hidup konsumerisme, hedonisme, dan individualisme yang menggerus kearifan lokal.</li>
+                        <li><strong>Perang Asimetris & Siber:</strong> Serangan terhadap data pusat nasional (PDN) dan pencurian data pribadi warga negara.</li>
+                    </ul>
+
+                    <div class="highlight-box" style="border-color: var(--neon-cyan);">
+                        <strong style="color: #fff;">KESIMPULAN: Pancasila sebagai Filter</strong><br>
+                        Di tengah gempuran tantangan global, Pancasila berfungsi sebagai <em>Filter</em> (Penyaring). Kita boleh menerima kemajuan teknologi asing (Iptek), tetapi harus menolak nilai-nilai yang bertentangan dengan Ketuhanan dan Kemanusiaan.
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-footer">
+                <p class="text-dim">Sudah siap menganalisis data negara?</p>
+                <a href="mission2.html" class="btn-tactical" style="border-color: var(--neon-cyan); color: var(--neon-cyan);">
+                    <i class="fas fa-play"></i> MASUK MISI 2 & UJI KOMPETENSI
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        function switchBab(babId) {
+            // Hilangkan status aktif dari semua
+            document.querySelectorAll('.bab-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            // Aktifkan yang dipilih
+            document.getElementById(babId).classList.add('active');
+            document.getElementById('btn-' + babId).classList.add('active');
+
+            // Scroll halus ke atas agar user fokus
+            window.scrollTo({ top: 100, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,336 @@
+/* =========================================
+   CIVICLOKA: TACTICAL SPRINT EDITION
+   Style Sheet Utama
+   Theme: Neo-Nusantara Cyber-Glass
+   ========================================= */
+
+/* 1. IMPORT FONT GOOGLE [cite: 1025] */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;400;600;800&family=Rajdhani:wght@500;600;700&display=swap');
+
+/* 2. VARIABLES (ROOT) [cite: 1023] */
+:root {
+    /* Palette Warna Utama (Dark Mode) */
+    --bg-color: #0F172A;       /* Deep Void - Latar Belakang */
+    --glass-bg: rgba(30, 41, 59, 0.65); /* Surface - Kaca Transparan */
+    --glass-border: rgba(255, 255, 255, 0.1); /* Garis Tepi Halus */
+    
+    /* Warna Aksen Neon */
+    --neon-gold: #F59E0B;      /* Primary - Garuda Gold */
+    --neon-cyan: #06B6D4;      /* Secondary - Cyber Cyan */
+    --neon-red: #EF4444;       /* Status: Bahaya/Salah */
+    --neon-green: #10B981;     /* Status: Sukses/Benar */
+    
+    /* Tipografi */
+    --text-main: #F1F5F9;      /* Hologram White */
+    --text-dim: #94A3B8;       /* Slate Grey (untuk teks sekunder) */
+    
+    /* Font Families [cite: 1026-1032] */
+    --font-head: 'Rajdhani', sans-serif;     /* Judul (Futuristik) */
+    --font-body: 'Outfit', sans-serif;       /* Isi Materi (Bersih) */
+    --font-mono: 'JetBrains Mono', monospace; /* Angka & Data */
+}
+
+/* 3. RESET & BASE STYLES */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    overflow-x: hidden; /* Mencegah scroll horizontal */
+    min-height: 100vh;
+    
+    /* Background Pattern: Nuansa Cyber + Batik Abstrak [cite: 1040] */
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(245, 158, 11, 0.15) 0%, transparent 25%),
+        linear-gradient(0deg, rgba(15, 23, 42, 1) 0%, rgba(15, 23, 42, 0.8) 100%);
+    background-attachment: fixed;
+}
+
+/* Typography Utils */
+h1, h2, h3, h4 {
+    font-family: var(--font-head);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+}
+
+.text-mono {
+    font-family: var(--font-mono);
+    letter-spacing: -0.5px;
+}
+
+.text-gold { color: var(--neon-gold); }
+.text-cyan { color: var(--neon-cyan); }
+.text-dim { color: var(--text-dim); }
+
+/* 4. COMPONENT: GLASS PANEL (Panel Kaca) [cite: 1053] */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);         /* Efek buram di belakang */
+    -webkit-backdrop-filter: blur(12px); /* Support Safari */
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); /* Deep shadow */
+    border-radius: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Efek Hover pada Kartu Misi */
+.glass-panel.hoverable:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 12px 40px rgba(6, 182, 212, 0.15); /* Cyan glow halus */
+}
+
+/* 5. COMPONENT: TACTICAL BUTTONS (Tombol Sudut Miring) [cite: 1060] */
+.btn-tactical {
+    position: relative;
+    display: inline-block;
+    padding: 12px 32px;
+    background: transparent;
+    color: var(--neon-cyan);
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-decoration: none;
+    border: 1px solid var(--neon-cyan);
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    
+    /* Clip-path untuk membuat sudut terpotong (Chamfered) */
+    clip-path: polygon(
+        10px 0, 100% 0, 
+        100% calc(100% - 10px), calc(100% - 10px) 100%, 
+        0 100%, 0 10px
+    );
+}
+
+.btn-tactical:hover {
+    background: var(--neon-cyan);
+    color: #000000; /* Teks jadi hitam agar kontras */
+    box-shadow: 0 0 25px rgba(6, 182, 212, 0.6); /* Efek Neon Glow */
+    text-shadow: none;
+}
+
+.btn-tactical:active {
+    transform: scale(0.98);
+}
+
+/* Varian Tombol Emas (Untuk Misi 1 / Start Utama) */
+.btn-start {
+    color: var(--neon-gold);
+    border-color: var(--neon-gold);
+}
+
+.btn-start:hover {
+    background: var(--neon-gold);
+    color: #000000;
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.6);
+}
+
+/* 6. FORM ELEMENTS (Input Login) */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--neon-cyan);
+    margin-bottom: 8px;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--text-main);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="text"]:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+}
+
+/* 7. LAYOUT UTILITIES */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Center Screen (Untuk Login & Intro) */
+.center-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+    padding: 20px;
+}
+
+/* Grid System untuk Kartu Misi */
+.mission-grid {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+/* 8. UTILITY: ANIMATIONS (Fade Up) [cite: 1073] */
+.fade-up {
+    opacity: 0;
+    animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ACCESS-OS: Focus Ring / Target Lock */
+:focus-visible {
+    outline: 3px solid var(--neon-gold);
+    outline-offset: 2px;
+    box-shadow: 0 0 15px var(--neon-gold);
+    animation: pulse-critical 1s infinite;
+}  
+
+/* Delay utilitas untuk elemen berurutan */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+
+/* 9. RESPONSIVE (Mobile Optimization) */
+@media (max-width: 768px) {
+    h1 { font-size: 2.5rem; }
+    h2 { font-size: 1.8rem; }
+    
+    .mission-grid {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .glass-panel {
+        width: 100% !important;
+        max-width: 350px;
+    }
+}
+
+/* =========================================
+   MODAL MATERI (INTEL DATA)
+   ========================================= */
+
+/* Latar Belakang Gelap */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.95); /* Sangat gelap agar fokus */
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Kotak Konten Utama */
+.modal-content {
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Agar scroll ada di body modal */
+    border: 1px solid var(--neon-cyan);
+    box-shadow: 0 0 50px rgba(6, 182, 212, 0.2);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.btn-close {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 2rem;
+    cursor: pointer;
+    line-height: 1;
+}
+.btn-close:hover { color: var(--neon-red); }
+
+.modal-body {
+    padding: 25px;
+    overflow-y: auto; /* Scroll jika konten panjang */
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Grid Layout untuk Kartu Materi */
+.intel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* Kartu Materi Kecil */
+.intel-card {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid transparent;
+}
+
+.intel-card h4 { margin-top: 0; font-size: 1rem; margin-bottom: 10px; }
+.intel-card ul { margin-left: 20px; font-size: 0.85rem; color: #e2e8f0; }
+.intel-card li { margin-bottom: 5px; }
+
+/* Warna Border Samping */
+.border-green { border-left-color: var(--neon-green); }
+.border-red { border-left-color: var(--neon-red); }
+.border-gold { border-left-color: var(--neon-gold); }
+.border-cyan { border-left-color: var(--neon-cyan); }
+
+/* Responsive HP */
+@media (max-width: 600px) {
+    .intel-grid { grid-template-columns: 1fr; }
+}
